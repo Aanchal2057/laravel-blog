@@ -30,15 +30,18 @@
 </html> -->
 
 <x-layout>
-    @foreach ($posts as $post)
+    @foreach($posts as $post)
     <article>
         <h1>
-            <a href="/posts/{{ $post->slug }}">
-                {{$post->title}}
+            <a href="/posts/{{ $post-> slug}}">
+                {{!! $post->title !!}}
             </a>
         </h1>
+        <p>
+        By <a href="{{$post->author->name}}"></a> <a href="/categories/{{ $post->category->slug}}">{{ $post->category->name}}</a>
+        </p>
 
-        <p><?= $post->excerpt ?></p>
+        <div><?= $post->excerpt ?></div>
     </article>
 
     @endforeach

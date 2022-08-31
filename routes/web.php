@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use League\CommonMark\Extension\FrontMatter\Data\LibYamlFrontMatterParser;
@@ -18,44 +19,49 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 |
 */
 
+
 // Route::get('/', function () {
-
-//     $files = File::files(resource_path("posts"));
-//     $posts = collect($files)->map(function ($file){ //collection class allow to chain its method to map properly
-//         $document = YamlFrontMatter::parseFile($file);
-//         return new Post( //fetch the post objects excerpt
-//             $document -> title,
-//             $document->date,
-//             $document->slug,
-//             $document->body()
-//         );
-//     });
-
-
-//     return view('posts.post',[
-//         'posts' => $posts
+//     return view('posts.post', [
+//         'posts' => Post::all()
 //     ]);
 // });
-// Route::get('/post/{post}', function($slug){
-   
-//    return view('posts.sub',[
-//     'post' => Post::find($slug)
-//    ]);
-// })->where('post','[A-z_\-]+');
 
+// Route::get('posts/{post}', function ($id) {
+//          return view('posts.sub', [
+//         'post' => Post::findOrFail($id)
+//     ]);
+// });
+
+//Route model binding
+// Route::get('posts/{post}', function (Post $post) {// check variable name match the wildcard name
+//     return view('posts.sub', [
+//    'post' => $post
+// ]);
+// });
 
 Route::get('/', function () {
     return view('posts.post', [
-        'posts' => Post::all()
+        'posts' => Post::Latest('published_at')->with('category','author')->get()
     ]);
 });
 
-Route::get('posts/{post}', function ($slug) {
 
-    // find a post by its slug and pass it to a view called "post"
-    // $post = Post::find($slug);
 
+Route::get('posts/{post:slug}', function (Post $post) {// give the post where matches the slug provide
     return view('posts.sub', [
-        'post' => Post::findOrFail($slug)
-    ]);
+   'post' => $post
+]);
 });
+
+Route::get('categories/{category:slug}',function(Category $category){
+  return view('posts.post',[
+   'posts' =>$category->post
+  ]);
+});
+
+Route::get('author/{author}',function(\App\Models\User $author){
+    // dd($author);
+    return view('posts.post',[
+     'posts' =>$author->posts
+    ]);
+  });
