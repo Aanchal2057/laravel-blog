@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Post;
+use League\CommonMark\Extension\FrontMatter\Data\LibYamlFrontMatterParser;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,17 +18,44 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('posts');
-    //return Hello world!; //return string
-});
+// Route::get('/', function () {
+
+//     $files = File::files(resource_path("posts"));
+//     $posts = collect($files)->map(function ($file){ //collection class allow to chain its method to map properly
+//         $document = YamlFrontMatter::parseFile($file);
+//         return new Post( //fetch the post objects excerpt
+//             $document -> title,
+//             $document->date,
+//             $document->slug,
+//             $document->body()
+//         );
+//     });
 
 
-// Route::get('post', function () {
-//     return view('post',[
-//        // 'post'=>'<h1>Hello World</h1>' //$post
-//         'post' =>file_get_contents($filename)
+//     return view('posts.post',[
+//         'posts' => $posts
 //     ]);
 // });
+// Route::get('/post/{post}', function($slug){
+   
+//    return view('posts.sub',[
+//     'post' => Post::find($slug)
+//    ]);
+// })->where('post','[A-z_\-]+');
 
 
+Route::get('/', function () {
+    return view('posts.post', [
+        'posts' => Post::all()
+    ]);
+});
+
+Route::get('posts/{post}', function ($slug) {
+
+    // find a post by its slug and pass it to a view called "post"
+    // $post = Post::find($slug);
+
+    return view('posts.sub', [
+        'post' => Post::findOrFail($slug)
+    ]);
+});
