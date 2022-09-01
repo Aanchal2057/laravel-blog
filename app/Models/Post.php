@@ -18,6 +18,7 @@ class Post extends Model
     //     // return parent::getRouteKeyName();//change the auto generated stub
     //     return 'slug';
     // }
+    protected $with=['category','author'];
     public function category(){
         //hasone,hasmany,belongsto,belogstomany
         return $this->belongsTo(Category::class);

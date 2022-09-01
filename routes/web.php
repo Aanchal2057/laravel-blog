@@ -55,13 +55,13 @@ Route::get('posts/{post:slug}', function (Post $post) {// give the post where ma
 
 Route::get('categories/{category:slug}',function(Category $category){
   return view('posts.post',[
-   'posts' =>$category->post
+   'posts' =>$category->post   //->load('categories','author')
   ]);
 });
 
-Route::get('author/{author}',function(\App\Models\User $author){
+Route::get('author/{author:username}',function(\App\Models\User $author){
     // dd($author);
     return view('posts.post',[
-     'posts' =>$author->posts
+     'posts' =>$author->posts    //->load('categories','author')
     ]);
   });
