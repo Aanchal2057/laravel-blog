@@ -41,9 +41,10 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 Route::get('/', function () {
     return view('posts.post', [
-        'posts' => Post::Latest('published_at')->with('category','author')->get()
+        'posts' => Post::Latest('published_at')->with('category','author')->get(),
+        'categories' =>Category::all()
     ]);
-});
+})->name('home');
 
 
 
@@ -55,13 +56,17 @@ Route::get('posts/{post:slug}', function (Post $post) {// give the post where ma
 
 Route::get('categories/{category:slug}',function(Category $category){
   return view('posts.post',[
-   'posts' =>$category->post   //->load('categories','author')
+   'posts' =>$category->post ,
+   'currenCategory'=>$category,
+   'categories'=> Category::all()
+  
   ]);
-});
+})->name('category');
 
 Route::get('author/{author:username}',function(\App\Models\User $author){
     // dd($author);
     return view('posts.post',[
-     'posts' =>$author->posts    //->load('categories','author')
+     'posts' =>$author->posts ,
+       'categories'=>Category::all()
     ]);
   });
