@@ -24,41 +24,6 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 
 // basic routings and views
 Route::get('/', 
-    // function () {
-
-    // using collection to store data
-
-    // using foreach 
-
-    // $posts = [];
-
-    // foreach ($files as $file){
-    //     $document = YamlFrontMatter::parseFile($file);
-
-    //     $posts[] = new Post(
-    //         $document->title,
-    //         $document->excerpt,
-    //         $document->date,
-    //         $document->body(),
-    //         $document->slug,
-    //     );
-    // }
-
-
-    // $object = YamlFrontMatter::parseFile(
-    //     resource_path('posts/my-first-post.html')
-    // );
-
-    // ddd($object -> title);
-
-    // return Post::find('my-first-post');
-
-    // it listens all the mysql query and shows in storage/logs/laravel.log
-    // DB::listen(function ($query){
-    //     logger($query->sql, $query->bindings);
-    // });
-
-    // $posts = Post::latest();
 
     // if (request('search')) {
     //     $posts->where('title', 'like', '%'. request('search'). '%')
@@ -101,7 +66,7 @@ Route::get('catagories/{catagory:slug}', function (Catagory $catagory) {
     // find a post by its slug and pass it to a view called "post"
     // $post = Post::find($slug);
 
-    return view('posts', [
+    return view('posts.post', [
         'posts' => $catagory->posts->load(['catagory', 'author']),
         'currentCatagory' => $catagory,
         'catagories' => Catagory::all()
@@ -110,7 +75,7 @@ Route::get('catagories/{catagory:slug}', function (Catagory $catagory) {
 
 Route::get('authors/{author:userName}', function (User $author) {
 
-    return view('posts', [
+    return view('posts.post', [
         'posts' => $author->posts->load(['catagory', 'author']),
         'catagories' => Catagory::all()
     ]);
