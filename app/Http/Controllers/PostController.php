@@ -17,7 +17,7 @@ class PostController extends Controller
             // 'posts' => Post::all()
     
             // we just have to run sql query once to get all the posts
-            'posts' => Post::latest()->filter(request(['search','category','author']))->get(),
+            'posts' => Post::latest()->filter(request(['search','category','author']))->paginate(18)->withQueryString()
             // 'catagories' => Catagory::all()
             // 'currentCategory'=>Category::firstWhere('slug',request('category'))
         ]);
