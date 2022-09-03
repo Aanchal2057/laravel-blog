@@ -1,44 +1,64 @@
 <?php
 
 namespace App\Models;
-use App\Models\Category;
-use App\Models\User;
-use DB;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
     use HasFactory;
-    // protected $fillable=['title','excerpt','body','slug','category_id'];
-    // protected $guarded=['id'];//says every thing can be mass assigned except id
-    protected $guarded=[];//doesnot allow mass assign
 
-    // public function getRouteKeyName()
-    // {
-    //     // return parent::getRouteKeyName();//change the auto generated stub
-    //     return 'slug';
-    // }
+    // it guards properties to be unchangable while mass assigning
+    // protected $guarded = ['id'];
 
-    //query scope
+    // it only allows the fillable to properties to be mass assigned
+    // protected $fillable = ['title', 'excerpt', 'body'];
+
+    // It always include catagory and author during sql query
+    // protected $with = ['catagory','author']
+
+    public function catagory()
+    {
+        // realtions type :
+        // hasOne, hasMany, belongsTo, belongsToMany
+
+        return $this->belongsTo(Catagory::class);
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function scopeFilter($query, array $filters)
     {  // Post::newQuery->filter()
 
-        $query->when(
-            $filters['search'] ?? false, //null coalescing operator
-            function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%');
-            }
-        );
-    }
-    protected $with=['category','author'];
-    public function category(){
-        //hasone,hasmany,belongsto,belogstomany
-        return $this->belongsTo(Category::class);
-        // return $this->belongsTo('App\Category','foreign_key');
-    }
-    public function author(){
-        return $this->belongsTo(User::class,'user_id');
-    }
+        // $query->when(
+        //     $filters['search'] ?? false,
+        //     function ($query, $search) {
+        //         $query->where('title', 'like', '%' . $search . '%');
+        //     }
+        // );
 
+        $query->when($filters['search'] ?? false,fn($query,$search)=>
+        $query->where(fn($query)=>
+          $query ->where('title','like','%'.$search.'%')
+           ->orwhere('body','like','%'.$search.'%')
+        )
+        );
+
+        $query->when($filters['category'] ?? false,fn($query,$category)=>
+        $query
+           ->whereHas('category',fn($query)=> 
+           $query->where('slug',$category))
+        );
+
+        $query->when($filters['author'] ?? false,fn($query,$author)=>
+        $query
+           ->whereHas('author',fn($query)=> 
+           $query->where('username',$author))
+        );
+        
+    }
 }
